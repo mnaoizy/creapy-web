@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creaky Voice Detector</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Creaky Voice Detector</h1>
+        <p class="description">Upload a WAV file to analyze creaky voice patterns</p>
+        
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept=".wav" />
+            <button id="analyzeBtn" disabled>Analyze Audio</button>
+        </div>
+        
+        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing audio...</p>
+        </div>
+        
+        <div id="results" class="results-section" style="display: none;">
+            <div class="audio-controls">
+                <audio id="audioPlayer" controls></audio>
+                <div class="time-display">
+                    <span>Current Time: </span>
+                    <span id="currentTime">0.00s</span>
+                </div>
+            </div>
+            
+            <div id="waveformPlot" class="plot-container"></div>
+            <div id="creakPlot" class="plot-container"></div>
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>

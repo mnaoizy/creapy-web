@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: creaky-voice-detector
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 8000
+    healthCheckPath: /
+    autoDeploy: false

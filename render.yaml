@@ -1,7 +1,7 @@
 services:
   - type: web
     name: creaky-voice-detector
-    env: docker
+    runtime: docker
     dockerfilePath: ./Dockerfile
     envVars:
       - key: PORT

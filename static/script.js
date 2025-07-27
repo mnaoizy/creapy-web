@@ -1,5 +1,15 @@
 let audioData = null;
 let wavesurfer = null;
+let currentSettings = {
+    block_size: 0.04,
+    hop_size: 0.01,
+    creak_threshold: 0.75,
+    gender_model: 'all',
+    zcr_threshold: 0.08,
+    ste_threshold: 0.00001,
+    audio_start: 0,
+    audio_end: -1
+};
 
 const fileInput = document.getElementById('fileInput');
 const analyzeBtn = document.getElementById('analyzeBtn');
@@ -10,9 +20,97 @@ const playPauseBtn = document.getElementById('playPauseBtn');
 const currentTimeDisplay = document.getElementById('currentTime');
 const totalTimeDisplay = document.getElementById('totalTime');
 
+// Settings panel elements
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const closeSettingsBtn = document.getElementById('closeSettings');
+const applySettingsBtn = document.getElementById('applySettings');
+const resetSettingsBtn = document.getElementById('resetSettings');
+
 fileInput.addEventListener('change', (e) => {
     analyzeBtn.disabled = !e.target.files.length;
 });
+
+// Settings panel event listeners
+settingsBtn.addEventListener('click', () => {
+    loadSettingsToUI();
+    settingsPanel.style.display = 'flex';
+});
+
+closeSettingsBtn.addEventListener('click', () => {
+    settingsPanel.style.display = 'none';
+});
+
+settingsPanel.addEventListener('click', (e) => {
+    if (e.target === settingsPanel) {
+        settingsPanel.style.display = 'none';
+    }
+});
+
+applySettingsBtn.addEventListener('click', () => {
+    saveSettingsFromUI();
+    settingsPanel.style.display = 'none';
+    
+    // If results are currently displayed, update the visualization with new settings
+    if (audioData && resultsSection.style.display !== 'none') {
+        updateVisualizationWithNewSettings();
+    }
+});
+
+resetSettingsBtn.addEventListener('click', () => {
+    resetToDefaults();
+    loadSettingsToUI();
+});
+
+// Settings management functions
+function loadSettingsToUI() {
+    document.getElementById('blockSize').value = currentSettings.block_size;
+    document.getElementById('hopSize').value = currentSettings.hop_size;
+    document.getElementById('creakThreshold').value = currentSettings.creak_threshold;
+    document.getElementById('genderModel').value = currentSettings.gender_model;
+    document.getElementById('zcrThreshold').value = currentSettings.zcr_threshold;
+    document.getElementById('steThreshold').value = currentSettings.ste_threshold;
+    document.getElementById('audioStart').value = currentSettings.audio_start;
+    document.getElementById('audioEnd').value = currentSettings.audio_end;
+}
+
+function saveSettingsFromUI() {
+    currentSettings.block_size = parseFloat(document.getElementById('blockSize').value);
+    currentSettings.hop_size = parseFloat(document.getElementById('hopSize').value);
+    currentSettings.creak_threshold = parseFloat(document.getElementById('creakThreshold').value);
+    currentSettings.gender_model = document.getElementById('genderModel').value;
+    currentSettings.zcr_threshold = parseFloat(document.getElementById('zcrThreshold').value);
+    currentSettings.ste_threshold = parseFloat(document.getElementById('steThreshold').value);
+    currentSettings.audio_start = parseFloat(document.getElementById('audioStart').value);
+    currentSettings.audio_end = parseFloat(document.getElementById('audioEnd').value);
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('creapySettings', JSON.stringify(currentSettings));
+}
+
+function resetToDefaults() {
+    currentSettings = {
+        block_size: 0.04,
+        hop_size: 0.01,
+        creak_threshold: 0.75,
+        gender_model: 'all',
+        zcr_threshold: 0.08,
+        ste_threshold: 0.00001,
+        audio_start: 0,
+        audio_end: -1
+    };
+    localStorage.removeItem('creapySettings');
+}
+
+function loadSettingsFromStorage() {
+    const saved = localStorage.getItem('creapySettings');
+    if (saved) {
+        currentSettings = { ...currentSettings, ...JSON.parse(saved) };
+    }
+}
+
+// Load settings on page load
+loadSettingsFromStorage();
 
 analyzeBtn.addEventListener('click', async () => {
     const file = fileInput.files[0];
@@ -20,6 +118,11 @@ analyzeBtn.addEventListener('click', async () => {
     
     const formData = new FormData();
     formData.append('file', file);
+    
+    // Add settings to form data
+    Object.keys(currentSettings).forEach(key => {
+        formData.append(key, currentSettings[key]);
+    });
     
     loadingSpinner.style.display = 'block';
     resultsSection.style.display = 'none';
@@ -118,8 +221,8 @@ function initializeWaveSurfer(audioUrl) {
 
 function addCreakOverlay() {
     // Add regions for high creaky voice probability
-    const creakThreshold = 0.75;
-    const hopSize = 0.01;
+    const creakThreshold = currentSettings.creak_threshold;
+    const hopSize = currentSettings.hop_size;
     
     let regionStart = null;
     
@@ -235,7 +338,7 @@ function base64ToBlob(base64, mimeType) {
 }
 
 function plotCreakProbability() {
-    const creakThreshold = 0.75;
+    const creakThreshold = currentSettings.creak_threshold;
     
     const probabilityTrace = {
         x: audioData.creak_probability.time,
@@ -254,7 +357,7 @@ function plotCreakProbability() {
         type: 'scatter',
         mode: 'lines',
         line: { color: '#95a5a6', width: 1, dash: 'dash' },
-        name: 'Threshold (0.75)'
+        name: `Threshold (${creakThreshold})`
     };
     
     const layout = {

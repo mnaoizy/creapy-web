@@ -16,6 +16,88 @@
         <div class="upload-section">
             <input type="file" id="fileInput" accept=".wav" />
             <button id="analyzeBtn" disabled>Analyze Audio</button>
+            <button id="settingsBtn" type="button">⚙️ Settings</button>
+        </div>
+        
+        <!-- Settings Panel -->
+        <div id="settingsPanel" class="settings-panel" style="display: none;">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>Creapy Configuration</h3>
+                    <button id="closeSettings" class="close-btn">×</button>
+                </div>
+                
+                <div class="settings-body">
+                    <div class="settings-section">
+                        <h4>Analysis Parameters</h4>
+                        
+                        <div class="setting-group">
+                            <label for="blockSize">Block Size (seconds):</label>
+                            <input type="number" id="blockSize" step="0.001" min="0.001" max="1.0" value="0.04">
+                            <span class="setting-description">Classification blocksize. Smaller values give better time resolution but are more expensive.</span>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="hopSize">Hop Size (seconds):</label>
+                            <input type="number" id="hopSize" step="0.001" min="0.001" max="0.5" value="0.01">
+                            <span class="setting-description">Classification hopsize. Should be 1/4 to 1/2 of block size.</span>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="creakThreshold">Creak Threshold:</label>
+                            <input type="number" id="creakThreshold" step="0.01" min="0" max="1" value="0.75">
+                            <span class="setting-description">Probability threshold for creak classification (0-1).</span>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="genderModel">Gender Model:</label>
+                            <select id="genderModel">
+                                <option value="all">All (Default)</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            <span class="setting-description">Model trained on specific gender. Use 'all' for male speakers, 'female' for female speakers.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h4>Pre-elimination Features</h4>
+                        
+                        <div class="setting-group">
+                            <label for="zcrThreshold">ZCR Threshold:</label>
+                            <input type="number" id="zcrThreshold" step="0.01" min="0" max="1" value="0.08">
+                            <span class="setting-description">Zero-crossing rate threshold. Higher values (0.10-0.18) work better for female speakers.</span>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="steThreshold">STE Threshold:</label>
+                            <input type="number" id="steThreshold" step="0.00001" min="0" max="0.001" value="0.00001">
+                            <span class="setting-description">Short-term energy threshold. Eliminates silence and noise blocks.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h4>Audio Processing</h4>
+                        
+                        <div class="setting-group">
+                            <label for="audioStart">Start Time (seconds):</label>
+                            <input type="number" id="audioStart" step="0.1" min="0" value="0">
+                            <span class="setting-description">Start time for analysis.</span>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="audioEnd">End Time (seconds):</label>
+                            <input type="number" id="audioEnd" step="0.1" min="-1" value="-1">
+                            <span class="setting-description">End time for analysis (-1 for full file).</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-footer">
+                    <button id="resetSettings" class="secondary-btn">Reset to Defaults</button>
+                    <button id="applySettings" class="primary-btn">Apply Settings</button>
+                </div>
+            </div>
         </div>
         
         <div id="loadingSpinner" class="loading-spinner" style="display: none;">

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,7 +27,17 @@ app.add_middleware(
 )
 
 @app.post("/analyze")
-async def analyze_audio(file: UploadFile = File(...)):
+async def analyze_audio(
+    file: UploadFile = File(...),
+    block_size: float = Form(0.04),
+    hop_size: float = Form(0.01),
+    creak_threshold: float = Form(0.75),
+    gender_model: str = Form('all'),
+    zcr_threshold: float = Form(0.08),
+    ste_threshold: float = Form(0.00001),
+    audio_start: float = Form(0),
+    audio_end: float = Form(-1)
+):
     if not file.filename.lower().endswith('.wav'):
         raise HTTPException(status_code=400, detail="Only WAV files are supported")
     
@@ -61,13 +71,25 @@ async def analyze_audio(file: UploadFile = File(...)):
                 f.write(f'            xmax = {duration}\n')
                 f.write('            text = ""\n')
         
+        # Apply custom settings to creapy
+        creapy.set_config(
+            block_size=block_size,
+            hop_size=hop_size,
+            creak_threshold=creak_threshold,
+            zcr_threshold=zcr_threshold,
+            ste_threshold=ste_threshold,
+            audio_start=audio_start,
+            audio_end=audio_end,
+            gender_model=gender_model
+        )
+        
         X_test, y_pred, sr_creapy = creapy.process_file(
             audio_path=tmp_audio_path,
             textgrid_path=tmp_textgrid_path,
-            gender_model='all'
+            gender_model=gender_model
         )
         
-        time_vector = np.arange(len(y_pred)) * 0.01
+        time_vector = np.arange(len(y_pred)) * hop_size
         
         audio_data_normalized = audio_data / np.max(np.abs(audio_data))
         

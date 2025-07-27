@@ -90,8 +90,8 @@ tmp/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
 
-# Cloned creapy source (if used)
-creapy/
+# Cloned creapy source - keep for deployment
+# creapy/
 
 # Node modules (if any frontend tooling is added)
 node_modules/

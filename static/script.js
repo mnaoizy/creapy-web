@@ -396,3 +396,29 @@ function plotCreakProbability() {
         }
     });
 }
+
+function updateVisualizationWithNewSettings() {
+    if (!audioData || !wavesurfer) return;
+    
+    // Clear existing overlays
+    const waveformElement = document.getElementById('waveform');
+    const existingOverlays = waveformElement.querySelectorAll('div[style*="position: absolute"]');
+    existingOverlays.forEach(overlay => overlay.remove());
+    
+    // Re-add creak overlay with new threshold
+    addCreakOverlay();
+    
+    // Update the plot with new threshold line
+    const creakThreshold = currentSettings.creak_threshold;
+    const thresholdTrace = {
+        x: audioData.creak_probability.time,
+        y: new Array(audioData.creak_probability.time.length).fill(creakThreshold),
+        type: 'scatter',
+        mode: 'lines',
+        line: { color: '#95a5a6', width: 1, dash: 'dash' },
+        name: `Threshold (${creakThreshold})`
+    };
+    
+    // Update the second trace (threshold line) in the plot
+    Plotly.restyle('creakPlot', { y: [thresholdTrace.y], name: [thresholdTrace.name] }, [1]);
+}

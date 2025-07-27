@@ -91,15 +91,50 @@ button:disabled {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.audio-controls {
+.playback-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
     margin-bottom: 2rem;
-    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
 }
 
-audio {
-    width: 100%;
-    max-width: 600px;
+#playPauseBtn {
+    background: #2ecc71;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#playPauseBtn:hover {
+    background: #27ae60;
+}
+
+.waveform-container {
+    margin-bottom: 2rem;
+}
+
+.waveform-container h3,
+.creak-analysis h3 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+#waveform {
+    border: 1px solid #ddd;
+    border-radius: 4px;
     margin-bottom: 1rem;
+}
+
+.creak-analysis {
+    margin-bottom: 2rem;
 }
 
 .time-display {

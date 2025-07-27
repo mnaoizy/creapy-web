@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source files for hot reload
+      - ./app.py:/app/app.py
+      - ./static:/app/static
+      - ./requirements.txt:/app/requirements.txt
+      # Prevent mounting over important directories
+      - /app/creapy
+      - /app/__pycache__
+      - /app/training_models
+    environment:
+      - PYTHONUNBUFFERED=1
+      - WATCHFILES_FORCE_POLLING=true
+      - RELOAD_DELAY=0.5  # Delay before reloading
+    stdin_open: true
+    tty: true
+    restart: unless-stopped

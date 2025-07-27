@@ -14,10 +14,10 @@ A web application for analyzing and visualizing creaky voice patterns in audio f
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Docker and Docker Compose
 - Git
 
-### Installation
+### Development Environment (Recommended)
 
 1. Clone the repository:
 ```bash
@@ -25,22 +25,38 @@ git clone <repository-url>
 cd creapy-web
 ```
 
-2. Install dependencies:
+2. Start development environment with hot reload:
 ```bash
-# Option 1: Use the install script
-./install.sh
+# Option 1: Using make (recommended)
+make dev
 
-# Option 2: Manual installation
+# Option 2: Using docker-compose directly
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+3. Open your browser and navigate to `http://localhost:8000`
+
+### Local Python Installation
+
+1. Install dependencies:
+```bash
 pip install -r requirements.txt
 pip install git+https://gitlab.tugraz.at/speech/creapy.git
 ```
 
-3. Run the application:
+2. Run the application:
 ```bash
 python app.py
 ```
 
-4. Open your browser and navigate to `http://localhost:8000`
+### Available Make Commands
+
+- `make dev` - Start development environment with hot reload
+- `make dev-detached` - Start development in background
+- `make logs-dev` - View development logs
+- `make down` - Stop all services
+- `make clean` - Clean up containers and images
+- `make help` - Show all available commands
 
 ## Usage
 
